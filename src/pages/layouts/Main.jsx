@@ -6,6 +6,7 @@ export const Main = () => {
   const [weatherTime, setWeatherTime] = useState({});
   const [weatherIcon, setWeatherIcon] = useState({});
   const [isCelzius, setIsCelzius] = useState(true);
+  const [fiveDayForecast, setFiveDayForecast] = useState([]);
 
   useEffect(() => {
     getTimeAndZone();
@@ -24,6 +25,44 @@ export const Main = () => {
       img: data.current.condition.icon,
       alt: data.current.condition.text,
     });
+    setFiveDayForecast(data.forecast.forecastday);
+  };
+
+  const dayForecast = (forecast) => {
+    return (
+      <div width="300px">
+        <div className='center-col' height='100px'>
+      <table>
+        <tbody>
+          <tr>
+            {forecast.hour.map((hour, key) => (
+              <td key={key}>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td align="center">{key < 10 ? "0" + key : key}:00</td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <img src={hour.condition.icon} />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        {isCelzius
+                          ? Math.round(hour.temp_c)
+                          : Math.round(hour.temp_f)}
+                        °
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table></div></div>
+    );
   };
 
   return (
@@ -40,6 +79,14 @@ export const Main = () => {
           <img src={weatherIcon.img} alt={weatherIcon.alt} />
           <br />
           {time}
+          <br />
+          {fiveDayForecast.map((forecast, key) => (
+            <li key={key}>
+              {forecast.date == new Date().toLocaleDateString("en-CA")
+                ? dayForecast(forecast)
+                : "white"}
+            </li>
+          ))}
         </div>
       )}
     </div>
