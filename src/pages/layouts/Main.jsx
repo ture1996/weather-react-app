@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 
 export const Main = () => {
   const [time, setTime] = useState(0);
+  const [weatherTime, setWeatherTime] = useState({});
   const [weatherIcon, setWeatherIcon] = useState({});
+  const [isCelzius, setIsCelzius] = useState(true);
 
   useEffect(() => {
     getTimeAndZone();
@@ -13,6 +15,12 @@ export const Main = () => {
     const position = await weatherService.getCoords();
     const { data } = await weatherService.getTime(position);
     setTime(data.location.localtime);
+    console.log(data);
+    setWeatherTime({
+      c_temp: data.current.temp_c,
+      f_temp: data.current.temp_f,
+    });
+    console.log(weatherTime);
     setWeatherIcon({
       img: data.current.condition.icon,
       alt: data.current.condition.text,
@@ -21,8 +29,15 @@ export const Main = () => {
 
   return (
     <div>
-      {weatherIcon && (
+      {weatherTime && (
         <div>
+          <button onClick={() => setIsCelzius(!isCelzius)}>
+            {isCelzius ? "°F" : "°C"}
+          </button>
+          <div>
+            {isCelzius ? weatherTime.c_temp + "°C" : weatherTime.f_temp + "°F"}
+          </div>
+          <br />
           <img src={weatherIcon.img} alt={weatherIcon.alt} />
           <br />
           {time}
