@@ -20,7 +20,6 @@ export const Main = () => {
       c_temp: data.current.temp_c,
       f_temp: data.current.temp_f,
     });
-    console.log(weatherTime);
     setWeatherIcon({
       img: data.current.condition.icon,
       alt: data.current.condition.text,

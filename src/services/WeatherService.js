@@ -28,17 +28,15 @@ class WeatherService extends ApiService {
 
   getCoords() {
     return {
-      longitude: this.long,
       latitude: this.lat,
+      longitude: this.long,
     };
   }
 
   getTime = async (position) => {
     const data = await this.client.get(
-      `/forecast.json?key=ede8801c0e634978a4a91953230304&q=${
-        (position.latitude, position.longitude)
-      }
-      )}&days=5&aqi=yes&alerts=no`
+      `/forecast.json?key=ede8801c0e634978a4a91953230304&q=${position.longitude},${position.latitude}
+      )}&days=5&aqi=yes&alerts=yes`
     );
     return data;
   };
