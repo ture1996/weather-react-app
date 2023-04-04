@@ -5,15 +5,21 @@ export const Main = () => {
   const [time, setTime] = useState(0);
   const [weatherTime, setWeatherTime] = useState({});
   const [weatherIcon, setWeatherIcon] = useState({});
-  const [isCelzius, setIsCelzius] = useState(true);
+  const [isCelsius, setIsCelsius] = useState(true);
   const [fiveDayForecast, setFiveDayForecast] = useState([]);
+  const options = { weekday: "short", day: "numeric", month: "short" };
 
   useEffect(() => {
     getTimeAndZone();
   }, []);
 
+  const epochConverter = (epoch) => {
+    const date = new Date(epoch).toLocaleDateString("en-US", options);
+    return date;
+  };
+
   const getTimeAndZone = async () => {
-    const position = await weatherService.getCoords();
+    const position = weatherService.getCoords();
     const { data } = await weatherService.getTime(position);
     setTime(data.location.localtime);
     console.log(data);
@@ -28,64 +34,112 @@ export const Main = () => {
     setFiveDayForecast(data.forecast.forecastday);
   };
 
-  const dayForecast = (forecast) => {
+  const currentDayForecast = (forecast) => {
     return (
       <div width="300px">
-        <div className='center-col' height='100px'>
-      <table>
-        <tbody>
-          <tr>
-            {forecast.hour.map((hour, key) => (
-              <td key={key}>
-                <table>
-                  <tbody>
-                    <tr>
-                      <td align="center">{key < 10 ? "0" + key : key}:00</td>
-                    </tr>
-                    <tr>
-                      <td align="center">
-                        <img src={hour.condition.icon} />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td align="center">
-                        {isCelzius
-                          ? Math.round(hour.temp_c)
-                          : Math.round(hour.temp_f)}
-                        °
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        <div className="center-col" height="100px">
+          <table>
+            <tbody>
+              <tr>
+                {forecast.hour.map((hour, key) => (
+                  <td key={key}>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td align="center">
+                            {key < 10 ? "0" + key : key}:00
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="center">
+                            <img
+                              src={hour.condition.icon}
+                              alt={hour.condition.text}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="center">
+                            {isCelsius
+                              ? Math.round(hour.temp_c)
+                              : Math.round(hour.temp_f)}
+                            °
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  const otherDaysForecast = (forecast) => {
+    return (
+      <div>
+        <table width="100%">
+          <tbody>
+            <tr>
+              <td align="left" width="33%">
+                {epochConverter(forecast.date)}
               </td>
-            ))}
-          </tr>
-        </tbody>
-      </table></div></div>
+              <td align="center" width="33%">
+                <img
+                  src={forecast.day.condition.icon}
+                  alt={forecast.day.condition.text}
+                />
+              </td>
+              <td align="right" width="33%">
+                {isCelsius
+                  ? Math.round(forecast.day.maxtemp_c) +
+                    "°/" +
+                    Math.round(forecast.day.mintemp_c) +
+                    "°"
+                  : Math.round(forecast.day.maxtemp_f) +
+                    "°/" +
+                    Math.round(forecast.day.mintemp_f) +
+                    "°"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   };
 
   return (
-    <div>
+    <div className="main">
       {weatherTime && (
         <div>
-          <button onClick={() => setIsCelzius(!isCelzius)}>
-            {isCelzius ? "°F" : "°C"}
+          <button
+            className={isCelsius ? "converter-button-f" : "converter-button-c"}
+            onClick={() => setIsCelsius(!isCelsius)}
+          >
+            °{isCelsius ? "C" : "F"}
           </button>
-          <div>
-            {isCelzius ? weatherTime.c_temp + "°C" : weatherTime.f_temp + "°F"}
+          <div className="central-temp">
+            {isCelsius
+              ? Math.round(weatherTime.c_temp)
+              : Math.round(weatherTime.f_temp)}
+            °
           </div>
           <br />
-          <img src={weatherIcon.img} alt={weatherIcon.alt} />
+          <div align="center">
+            <img src={weatherIcon.img} alt={weatherIcon.alt} align="center" />
+          </div>
           <br />
-          {time}
+          <div className="last-updated">Last updated at : {time}</div>
           <br />
           {fiveDayForecast.map((forecast, key) => (
-            <li key={key}>
-              {forecast.date == new Date().toLocaleDateString("en-CA")
-                ? dayForecast(forecast)
-                : "white"}
-            </li>
+            <div key={key}>
+              {forecast.date === new Date().toLocaleDateString("en-CA")
+                ? currentDayForecast(forecast)
+                : otherDaysForecast(forecast)}
+            </div>
           ))}
         </div>
       )}

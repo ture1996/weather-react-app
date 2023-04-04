@@ -20,8 +20,6 @@ class WeatherService extends ApiService {
   #success(position) {
     this.lat = position?.coords?.latitude;
     this.long = position?.coords?.longitude;
-    console.log(this.long);
-    console.log(this.lat);
   }
 
   #error(aaa) {
@@ -36,12 +34,21 @@ class WeatherService extends ApiService {
   }
 
   getTime = async (position) => {
-    console.log(position);
     const data = await this.client.get(
       `/forecast.json?key=ede8801c0e634978a4a91953230304&q=${position.latitude},${position.longitude}
       &days=5&aqi=yes&alerts=yes`
     );
     return data;
+  };
+
+  getDailyReport = async (position, date) => {
+    const { data } = await this.getTime(position);
+    console.log(data);
+    const dailyReport = data.forecast.forecastday.find(
+      (day) => day.date === date
+    );
+    const alertReport = data.alerts.alert;
+    return { dailyReport: dailyReport, alertReport: alertReport };
   };
 }
 
