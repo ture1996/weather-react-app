@@ -1,16 +1,21 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import {Main} from "./pages/layouts/Main";
+import { Main } from "./pages/components/Main";
 import { DailyForecast } from "./pages/details/DailyForecast";
+import { AddCity } from "./pages/components/AddCity";
+import { NavBar } from "./pages/layouts/NavBar";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/dailyForecast/:date" element={<DailyForecast/>}/>
-      </Routes>
-    </BrowserRouter>
+    <NavBar>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/dailyForecast/:date" element={<DailyForecast />} />
+          <Route path="/addCity" element={<AddCity />} />
+        </Routes>
+      </BrowserRouter>
+    </NavBar>
   );
 }
 

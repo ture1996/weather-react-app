@@ -50,6 +50,12 @@ class WeatherService extends ApiService {
     const alertReport = data.alerts.alert;
     return { dailyReport: dailyReport, alertReport: alertReport };
   };
+  getCitiesFromSearch = async (city) => {
+
+    const {data} = await this.client.get(`/search.json?key=ede8801c0e634978a4a91953230304 &q=${city}`)
+    return data
+
+  };
 }
 
 export const weatherService = new WeatherService();

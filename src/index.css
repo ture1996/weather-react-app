@@ -32,6 +32,12 @@ code {
   font-family: "Times New Roman", Times, serif;
 }
 
+.central-name {
+  text-align: right;
+  font-size: 15px;
+  font-family: "Times New Roman", Times, serif;
+}
+
 .main {
   margin: 10px;
 }
@@ -68,6 +74,68 @@ code {
   color: red;
 }
 
+.arrow-black {
+  color: black;
+}
+
 .arrow-blue {
   color: blue;
+}
+
+#menu ul {
+  list-style: none;
+  padding: 0;
+}
+#menu li {
+  display: inline-flex;
+}
+
+#right {
+  float: right;
+}
+
+#left {
+  float: left;
+}
+
+.fixed-right {
+  position: fixed;
+  top: 40%;
+  right: 0;
+  width: 45px;
+  height: 45px;
+}
+
+.button-right {
+  display: block;
+  border: 0;
+  margin-bottom: 0.3em;
+  outline: none;
+  text-decoration: none;
+  color: #fff;
+  width: 45px;
+  font-size: 25px;
+  border-radius: 45px 0 0 45px;
+  text-align: center;
+}
+
+.fixed-left {
+  position: fixed;
+  top: 40%;
+  left: 0;
+  width: 45px;
+  height: 45px;
+}
+
+.button-left {
+  display: block;
+  border: 0;
+  margin-bottom: 0.3em;
+  outline: none;
+  text-decoration: none;
+  color: #fff;
+  width: 45px;
+  font-size: 25px;
+  border-radius: 0 45px 45px 0;
+  text-align: center;
 }
