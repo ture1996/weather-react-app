@@ -70,6 +70,10 @@ code {
   );
 }
 
+.delete {
+  float: right;
+}
+
 .arrow-red {
   color: red;
 }
@@ -138,4 +142,13 @@ code {
   font-size: 25px;
   border-radius: 0 45px 45px 0;
   text-align: center;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }

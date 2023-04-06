@@ -6,16 +6,17 @@ import { AddCity } from "./pages/components/AddCity";
 import { NavBar } from "./pages/layouts/NavBar";
 
 function App() {
+
   return (
-    <NavBar>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<NavBar />}>
           <Route path="/" element={<Main />} />
-          <Route path="/dailyForecast/:date" element={<DailyForecast />} />
+          <Route path="/:location/:date" element={<DailyForecast />} />
           <Route path="/addCity" element={<AddCity />} />
-        </Routes>
-      </BrowserRouter>
-    </NavBar>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

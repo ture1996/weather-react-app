@@ -1,4 +1,8 @@
-export const NavBar = ({ children }) => {
+import { Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+export const NavBar = () => {
+  const navigate = useNavigate()
   return (
     <div className="main">
       <nav id="menu">
@@ -6,7 +10,7 @@ export const NavBar = ({ children }) => {
           <li id="left">
             <button
               onClick={() => {
-                window.location.replace("/addCity");
+                navigate("/addCity");
               }}
             >
               +
@@ -15,7 +19,7 @@ export const NavBar = ({ children }) => {
           <li id="right">
             <button
               onClick={() => {
-                window.location.replace("/");
+                navigate("/");
               }}
             >
               Main
@@ -24,7 +28,7 @@ export const NavBar = ({ children }) => {
         </ul>
       </nav>
       <br />
-      {children}
+      <Outlet />
     </div>
   );
 };

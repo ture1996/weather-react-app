@@ -1,6 +1,8 @@
 import { weatherService } from "../../services/WeatherService";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Circles } from "react-loader-spinner";
+import { render } from "@testing-library/react";
 
 export const Main = () => {
   const [currentLocation, setCurrentLocation] = useState({});
@@ -11,6 +13,10 @@ export const Main = () => {
   const [isCelsius, setIsCelsius] = useState(true);
   const [fiveDayForecast, setFiveDayForecast] = useState([]);
   const [location, setLocation] = useState({});
+  const [windowLocation, setWindowLocation] = useState();
+  const [currentCity, setCurrentCity] = useState();
+  const [isLoading, setLoading] = useState(false);
+
   const options = { weekday: "short", day: "numeric", month: "short" };
   const navigate = useNavigate();
 
@@ -23,20 +29,21 @@ export const Main = () => {
     return date;
   };
 
-  const getTimeAndZone = async () => {
+  const getTimeAndZone = () => {
     const position = weatherService.getCoords();
     setCurrentLocation(position);
-    console.log(position);
     setSavedCities(JSON.parse(window.localStorage.getItem("city")));
     getWeather(position);
   };
 
   const getWeather = async (position) => {
-    console.log(savedCities);
+    setLoading(true);
     const { data } = await weatherService.getTime(position);
     setTime(data.location.localtime);
     setLocation(data.location);
-    console.log(data);
+    if (!currentCity) {
+      setCurrentCity(data.location);
+    }
     setWeatherTime({
       c_temp: data.current.temp_c,
       f_temp: data.current.temp_f,
@@ -46,6 +53,9 @@ export const Main = () => {
       alt: data.current.condition.text,
     });
     setFiveDayForecast(data.forecast.forecastday);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   };
 
   const currentDayForecast = (forecast) => {
@@ -99,7 +109,9 @@ export const Main = () => {
           <tbody>
             <tr
               onClick={() => {
-                navigate("/dailyForecast/" + forecast.date);
+                navigate(
+                  "/" + location.lat + "," + location.lon + "/" + forecast.date
+                );
               }}
             >
               <td align="left" width="33%">
@@ -129,68 +141,140 @@ export const Main = () => {
     );
   };
 
-  const isCurrent = (lat, lon) => {
-    if (
-      Math.round(currentLocation.latitude * 100).toFixed(2) / 100 === lat &&
-      Math.round(currentLocation.longitude * 100).toFixed(2) / 100 === lon
-    ) {
-      return false;
+  const nextCity = () => {
+    if (windowLocation) {
+      getWeather(savedCities[savedCities.indexOf(windowLocation) + 1]);
+      setWindowLocation(savedCities[savedCities.indexOf(windowLocation) + 1]);
+      return;
     }
-    return true;
+    setWindowLocation(savedCities[0]);
+    getWeather(savedCities[0]);
+    return;
   };
 
-  const isLast = (lat, lon) => {
-    if(!isCurrent(lat,lon) && savedCities ){
-      return true
+  const previousCity = () => {
+    if (windowLocation === savedCities[0]) {
+      getWeather(currentLocation);
+      setWindowLocation();
+      return;
+    }
+    getWeather(savedCities[savedCities.indexOf(windowLocation) - 1]);
+    setWindowLocation(savedCities[savedCities.indexOf(windowLocation) - 1]);
+  };
+
+  const isCurrent = () => {
+    return !(
+      currentCity?.name === location?.name &&
+      currentCity?.region === location?.region &&
+      currentCity?.country === location?.country &&
+      !windowLocation
+    );
+  };
+
+  const isLast = () => {
+    if (!isCurrent() && savedCities && !savedCities === []) {
+      return true;
+    }
+    return savedCities.indexOf(windowLocation) + 1 !== savedCities.length;
+  };
+
+  const deleteLocation = (location) => {
+    if (window.confirm("You sure want to delete this city?") === true) {
+      const index = savedCities.indexOf(location);
+      savedCities.splice(index, 1);
+      window.localStorage.setItem("city", JSON.stringify(savedCities));
+      getWeather(currentLocation);
+      setWindowLocation();
     }
   };
 
   return (
     <div>
-      {savedCities && isLast(location.lat, location.lon) && (
-        <button className="button-right fixed-right" onClick={() => {}}>
-          <span className="arrow-black"> &#8594; </span>
-        </button>
-      )}
-      {currentLocation && isCurrent(location.lat, location.lon) && (
-        <button className="button-left fixed-left" onClick={() => {}}>
-          <span className="arrow-black"> &#8592; </span>
-        </button>
-      )}
-      {weatherTime && (
+      {isLoading ? (
+        <div className="vertical-center">
+          <Circles
+            height="80"
+            width="80"
+            color="#4fa94d"
+            ariaLabel="circles-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+        </div>
+      ) : (
         <div>
-          <button
-            className={isCelsius ? "converter-button-f" : "converter-button-c"}
-            onClick={() => setIsCelsius(!isCelsius)}
-          >
-            °{isCelsius ? "C" : "F"}
-          </button>
-          <p className="central-name">
-            {location.name} {", "} {location.region}
-            {", "}
-            {location.country}
-          </p>
-          <div className="central-temp">
-            {isCelsius
-              ? Math.round(weatherTime.c_temp)
-              : Math.round(weatherTime.f_temp)}
-            °
-          </div>
+          {savedCities && isLast() && (
+            <button
+              className="button-right fixed-right"
+              onClick={() => {
+                nextCity();
+              }}
+            >
+              <span className="arrow-black"> &#8594; </span>
+            </button>
+          )}
+          {currentLocation && isCurrent() && (
+            <button
+              className="button-left fixed-left"
+              onClick={() => {
+                previousCity();
+              }}
+            >
+              <span className="arrow-black"> &#8592; </span>
+            </button>
+          )}
+          {weatherTime && (
+            <div>
+              <button
+                className={
+                  isCelsius ? "converter-button-f" : "converter-button-c"
+                }
+                onClick={() => setIsCelsius(!isCelsius)}
+              >
+                °{isCelsius ? "C" : "F"}
+              </button>
+              {windowLocation && (
+                <button
+                  className="delete"
+                  onClick={() => deleteLocation(windowLocation)}
+                >
+                  Delete
+                </button>
+              )}
+              <p className="central-name">
+                {location.name} {", "} {location.region}
+                {", "}
+                {location.country}
+              </p>
+              <div className="central-temp">
+                {isCelsius
+                  ? Math.round(weatherTime.c_temp)
+                  : Math.round(weatherTime.f_temp)}
+                °
+              </div>
 
-          <br />
-          <div align="center">
-            <img src={weatherIcon.img} alt={weatherIcon.alt} align="center" />
-          </div>
-          <br />
-          <div className="last-updated">Last updated at : {time}</div>
-          <br />
-          {fiveDayForecast.map((forecast, key) => (
-            <div key={key}>
-              {forecast.date === new Date().toLocaleDateString("en-CA")
-                ? currentDayForecast(forecast)
-                : otherDaysForecast(forecast)}
+              <br />
+              <div align="center">
+                <img
+                  src={weatherIcon.img}
+                  alt={weatherIcon.alt}
+                  align="center"
+                />
+              </div>
+              <br />
+              <div className="last-updated">Last updated at : {time}</div>
+              <br />
+              {fiveDayForecast.map((forecast, key) => (
+                <div key={key}>
+                  {forecast.date === new Date().toLocaleDateString("en-CA")
+                    ? currentDayForecast(forecast)
+                    : otherDaysForecast(forecast)}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+          )
         </div>
       )}
     </div>
