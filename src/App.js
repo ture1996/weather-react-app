@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Main } from "./pages/components/Main";
-import { DailyForecast } from "./pages/details/DailyForecast";
+import { DailyForecast } from "./pages/components/DailyForecast";
 import { AddCity } from "./pages/components/AddCity";
 import { NavBar } from "./pages/layouts/NavBar";
 

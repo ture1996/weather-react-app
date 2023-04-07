@@ -74,13 +74,14 @@ export const AddCity = () => {
           />
         </div>
       ) : (
-        <div>
+        <div className="add-city-screen">
           <form
             onSubmit={(e) => {
               saveAndRedirect(e, selectedCity);
             }}
           >
             <input
+              className="search-input"
               name="search"
               type="text"
               value={search}
@@ -89,9 +90,11 @@ export const AddCity = () => {
               }}
             />
             <br />
+            <br />
             {cities && (
               <div>
                 <select
+                  className="search-input"
                   id="cities"
                   onChange={(e) => {
                     setSelectedCity(
@@ -99,30 +102,40 @@ export const AddCity = () => {
                     );
                   }}
                 >
-                  <option hidden disabled selected value></option>
+                  <option hidden disabled selected value>
+                    --- select city ---
+                  </option>
                   {cities.map((city, key) => chooseCity(city, key))}
                 </select>
                 <br />
               </div>
             )}
-            <button
-              type="button"
-              name="search"
-              onClick={() => {
-                getCities();
-              }}
-            >
-              Search
-            </button>{" "}
-            {!selectedCity ? (
-              <button disabled type="submit" name="disabled">
-                Save
-              </button>
-            ) : (
-              <button type="submit" name="save">
-                Save
-              </button>
-            )}
+            <br />
+            <div className="save-container">
+              <div className="flex-search-save">
+                <div
+                  className="flex-element"
+                  type="button"
+                  name="search"
+                  onClick={() => {
+                    getCities();
+                  }}
+                >
+                  <div className="search-button">&#128270;</div>
+                </div>
+                <div className="flex-element">
+                  {!selectedCity ? (
+                    <button disabled type="submit" name="disabled">
+                      Save
+                    </button>
+                  ) : (
+                    <button type="submit" name="save">
+                      Save
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </form>
         </div>
       )}

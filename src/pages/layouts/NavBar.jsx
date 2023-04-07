@@ -2,33 +2,33 @@ import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export const NavBar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
-    <div className="main">
-      <nav id="menu">
-        <ul width="100%" align="center">
-          <li id="left">
-            <button
+    <div>
+      <div className="main">
+        <div id="menu" className="flex-main">
+          <div>
+            <div
+              title="Add city"
+              className="fa fa-building nav-button"
               onClick={() => {
                 navigate("/addCity");
               }}
-            >
-              +
-            </button>
-          </li>
-          <li id="right">
-            <button
+            ></div>
+          </div>
+          <div>
+            <div
+            title="Go to main page"
+              className="fa fa-home nav-button"
               onClick={() => {
                 navigate("/");
               }}
-            >
-              Main
-            </button>
-          </li>
-        </ul>
-      </nav>
-      <br />
-      <Outlet />
+            />
+          </div>
+        </div>
+        <br />
+        <Outlet />
+      </div>
     </div>
   );
 };
