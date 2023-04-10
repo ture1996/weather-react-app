@@ -252,6 +252,19 @@ code {
   font-size: large;
 }
 
+.save-button {
+  background-color: transparent;
+  border:none;
+  font-size: 22px;
+}
+
+.save-button-pointer {
+  background-color: transparent;
+  border:none;
+  cursor: pointer;
+  font-size: 22px;
+}
+
 .save-container {
   width: 100%;
   display: flex;
@@ -259,20 +272,19 @@ code {
   justify-content: center;
 }
 
-form{
-  display:flex;
+form {
+  display: flex;
   flex-direction: column;
   align-items: center;
   width: 50%;
-
 }
 
 .flex-search-save {
   align-content: center;
   justify-content: space-between;
+  align-items: center;
   width: 60%;
   flex-direction: row;
   display: flex;
-  cursor: pointer;
   align-self: center;
 }

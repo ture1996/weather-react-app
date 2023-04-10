@@ -121,17 +121,24 @@ export const AddCity = () => {
                     getCities();
                   }}
                 >
-                  <div className="search-button">&#128270;</div>
+                  <div>
+                    <p className="search-button">&#128270;</p>
+                  </div>
                 </div>
                 <div className="flex-element">
                   {!selectedCity ? (
-                    <button disabled type="submit" name="disabled">
-                      Save
-                    </button>
+                    <button
+                      disabled
+                      type="submit"
+                      className="fa fa-save save-button"
+                      name="disabled"
+                    ></button>
                   ) : (
-                    <button type="submit" name="save">
-                      Save
-                    </button>
+                    <button
+                      type="submit"
+                      name="save"
+                      className="fa fa-save save-button-pointer"
+                    ></button>
                   )}
                 </div>
               </div>
